@@ -1,0 +1,6 @@
+{
+  "name": "KalaSonus.art",
+  "description": "Transform your voice, hums, and sounds into generative kinetic NFT artwork on the blockchain.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

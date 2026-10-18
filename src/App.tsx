@@ -22,8 +22,15 @@ export default function App() {
   const [activePieceId, setActivePieceId] = useState<string | null>(null);
   const [showHowItWorks, setShowHowItWorks] = useState<boolean>(false);
 
-  // Check URL path for public gallery piece routing e.g. /piece/:id
+// Check URL query (?piece=...) OR path (/piece/:id) for public gallery piece routing
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const queryPieceId = params.get('piece');
+    if (queryPieceId) {
+      setActivePieceId(queryPieceId);
+      return;
+    }
+
     const path = window.location.pathname;
     if (path.startsWith('/piece/')) {
       const pieceId = path.split('/piece/')[1];

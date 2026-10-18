@@ -3,6 +3,7 @@ import { MintRecord } from '../types';
 import { Sparkles, Play, Pause, ExternalLink, Copy, Check, ShoppingBag, Eye, Award, Share2, ArrowLeft, Disc } from 'lucide-react';
 import { PrintfulOrderModal } from './PrintfulOrderModal';
 import { ARViewModal } from './ARViewModal';
+import { supabase } from '../lib/supabase';
 
 interface GalleryPieceViewProps {
   uniqueId: string;
@@ -28,10 +29,27 @@ export const GalleryPieceView: React.FC<GalleryPieceViewProps> = ({
     if (!initialMintRecord && uniqueId) {
       async function fetchMint() {
         try {
-          const res = await fetch(`/api/mints/${uniqueId}`);
-          if (res.ok) {
-            const data = await res.json();
-            setMintRecord(data);
+          // 1. Fetch from Bolt Database so QR code works on any phone
+          if (supabase) {
+            const { data, error } = await supabase
+              .from('mint_records')
+              .select('*')
+              .eq('unique_id', uniqueId)
+              .maybeSingle();
+
+            if (data && !error) {
+              setMintRecord(data as MintRecord);
+              setLoading(false);
+              return;
+            }
+          }
+
+          // 2. LocalStorage fallback
+          const localData = localStorage.getItem(`kalasonus_mint_${uniqueId}`);
+          if (localData) {
+            setMintRecord(JSON.parse(localData));
+            setLoading(false);
+            return;
           }
         } catch (err) {
           console.warn("Fetch mint error:", err);
@@ -213,10 +231,10 @@ export const GalleryPieceView: React.FC<GalleryPieceViewProps> = ({
           <div className="p-4 rounded-xl bg-[#16161e] border border-white/10 flex items-center justify-between">
             <div className="text-left font-metadata text-xs text-[#c8c5cb] truncate mr-2">
               <span className="font-label-mono text-[10px] text-[#5adace] block">GALLERY LINK</span>
-              {window.location.origin}/piece/{mintRecord.unique_id}
+              {window.location.origin}/?piece={mintRecord.unique_id}
             </div>
             <button
-              onClick={() => handleCopyHash(`${window.location.origin}/piece/${mintRecord.unique_id}`, 'link')}
+              onClick={() => handleCopyHash(`${window.location.origin}/?piece=${mintRecord.unique_id}`, 'link')}
               className="px-3 py-1.5 bg-[#292932] hover:bg-[#34343d] text-white border border-white/15 rounded-lg font-label-mono text-[11px] whitespace-nowrap cursor-pointer flex items-center gap-1.5"
             >
               {copiedTxHash === 'link' ? <Check className="w-3.5 h-3.5 text-[#5adace]" /> : <Share2 className="w-3.5 h-3.5" />}
@@ -249,7 +267,6 @@ export const GalleryPieceView: React.FC<GalleryPieceViewProps> = ({
         {/* Certificate Grid Data */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           
-          {/* Pitch metric */}
           <div className="p-4 bg-[#16161e] border border-white/10 rounded-xl font-mono text-xs">
             <span className="text-[10px] text-[#5adace] uppercase tracking-wider block mb-1">
               Dominant Pitch (Hz)
@@ -257,7 +274,6 @@ export const GalleryPieceView: React.FC<GalleryPieceViewProps> = ({
             <span className="text-xl font-bold text-white">{audio_features.pitchText}</span>
           </div>
 
-          {/* RMS Energy metric */}
           <div className="p-4 bg-[#16161e] border border-white/10 rounded-xl font-mono text-xs">
             <span className="text-[10px] text-[#5adace] uppercase tracking-wider block mb-1">
               RMS Energy Level
@@ -265,7 +281,6 @@ export const GalleryPieceView: React.FC<GalleryPieceViewProps> = ({
             <span className="text-xl font-bold text-white">{(audio_features.rms * 100).toFixed(1)}%</span>
           </div>
 
-          {/* ZCR Texture metric */}
           <div className="p-4 bg-[#16161e] border border-white/10 rounded-xl font-mono text-xs">
             <span className="text-[10px] text-[#5adace] uppercase tracking-wider block mb-1">
               Zero-Crossing Rate
@@ -273,7 +288,6 @@ export const GalleryPieceView: React.FC<GalleryPieceViewProps> = ({
             <span className="text-xl font-bold text-white">{(audio_features.zcr * 100).toFixed(1)}%</span>
           </div>
 
-          {/* Duration metric */}
           <div className="p-4 bg-[#16161e] border border-white/10 rounded-xl font-mono text-xs">
             <span className="text-[10px] text-[#5adace] uppercase tracking-wider block mb-1">
               Audio Duration

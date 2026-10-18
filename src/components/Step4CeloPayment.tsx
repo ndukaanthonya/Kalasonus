@@ -38,6 +38,14 @@ export const Step4CeloPayment: React.FC<Step4CeloPaymentProps> = ({
     try {
       let txHash = '';
 
+      // Instant Demo Wallet: skip MetaMask / window.ethereum entirely
+      if (wallet.walletName === 'Instant Demo Wallet') {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        txHash = '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        onPaymentConfirmed(txHash);
+        return;
+      }
+
       // Check if window.ethereum (MetaMask, Celo Wallet, Valora, Rabby) is present
       if (typeof window !== 'undefined' && (window as any).ethereum) {
         try {

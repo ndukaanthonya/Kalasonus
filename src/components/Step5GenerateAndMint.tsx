@@ -220,6 +220,18 @@ export const Step5GenerateAndMint: React.FC<Step5GenerateAndMintProps> = ({
               ctx.fillStyle = '#ffffff';
               ctx.fillRect(1710, 1710, 210, 210);
               ctx.drawImage(qrImg, 1720, 1720, 190, 190);
+
+              // Caption so anyone holding the print knows what the QR leads to
+              ctx.fillStyle = '#e4e1ed';
+              ctx.font = '26px "Inter", system-ui, sans-serif';
+              ctx.textAlign = 'right';
+              ctx.textBaseline = 'middle';
+              ctx.fillText('Scan this to listen to the voice', 1680, 1770);
+              ctx.fillText('that made this art piece', 1680, 1808);
+              ctx.fillStyle = '#5adace';
+              ctx.font = 'bold 20px monospace';
+              ctx.fillText('KALASONUS.ART', 1680, 1852);
+              ctx.textAlign = 'left';
             } catch (qrErr) {
               console.warn("QR code canvas embedding fallback:", qrErr);
             }

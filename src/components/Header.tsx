@@ -1,6 +1,6 @@
 import React from 'react';
 import { Step, WalletState } from '../types';
-import { Wallet, Image as ImageIcon, CheckCircle2, ChevronRight, Menu, X } from 'lucide-react';
+import { Wallet, Image as ImageIcon, CheckCircle2, ChevronRight, Menu, X, HelpCircle } from 'lucide-react';
 
 interface HeaderProps {
   currentStep: Step;
@@ -8,6 +8,7 @@ interface HeaderProps {
   wallet: WalletState;
   onOpenWalletModal: () => void;
   onOpenGallery: () => void;
+  onOpenHowItWorks: () => void;
   mintedCount: number;
 }
 
@@ -17,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   wallet,
   onOpenWalletModal,
   onOpenGallery,
+  onOpenHowItWorks,
   mintedCount
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -121,6 +123,16 @@ export const Header: React.FC<HeaderProps> = ({
             Connect
           </button>
         )}
+
+        {/* How it Works Button */}
+        <button
+          onClick={onOpenHowItWorks}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-white/10 bg-[#1f1f27] hover:bg-[#292932] font-label-mono text-[11px] text-[#e4e1ed] transition-colors cursor-pointer"
+          title="How it Works"
+        >
+          <HelpCircle className="w-3.5 h-3.5 text-[#5adace]" />
+          <span className="hidden sm:inline">How it Works</span>
+        </button>
 
         {/* Gallery Drawer Button */}
         <button

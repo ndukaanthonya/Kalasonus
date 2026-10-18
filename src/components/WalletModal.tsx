@@ -219,7 +219,8 @@ export const WalletModal: React.FC<WalletModalProps> = ({
 
             <button
               onClick={() => {
-                onConnect('KalaSonus.art One-Click Instant Wallet', '0x10A9f4C022E5a519822a10eF9004033C922485C9');
+                const demoAddress = '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+                onConnect('Instant Demo Wallet', demoAddress);
                 onClose();
               }}
               className="w-full p-3.5 bg-gradient-to-r from-[#55338d]/40 to-[#00504a]/40 border border-[#5adace]/30 hover:border-[#5adace] rounded-xl flex items-center justify-between group transition-all"

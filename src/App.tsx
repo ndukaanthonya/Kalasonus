@@ -10,6 +10,7 @@ import { Step3VoiceRecorder } from './components/Step3VoiceRecorder';
 import { Step4CeloPayment } from './components/Step4CeloPayment';
 import { Step5GenerateAndMint } from './components/Step5GenerateAndMint';
 import { GalleryPieceView } from './components/GalleryPieceView';
+import { HowItWorksPage } from './components/HowItWorksPage';
 import { WalletModal, NETWORKS } from './components/WalletModal';
 import { SuccessModal } from './components/SuccessModal';
 import { InfoModals } from './components/InfoModals';
@@ -19,6 +20,7 @@ export default function App() {
   // Navigation & Flow State
   const [currentStep, setCurrentStep] = useState<Step>(0);
   const [activePieceId, setActivePieceId] = useState<string | null>(null);
+  const [showHowItWorks, setShowHowItWorks] = useState<boolean>(false);
 
   // Check URL path for public gallery piece routing e.g. /piece/:id
   useEffect(() => {
@@ -113,11 +115,24 @@ export default function App() {
         wallet={wallet}
         onOpenWalletModal={() => setWalletModalOpen(true)}
         onOpenGallery={() => setGalleryDrawerOpen(true)}
+        onOpenHowItWorks={() => {
+          setShowHowItWorks(true);
+          setGalleryDrawerOpen(false);
+        }}
         mintedCount={mintsList.length}
       />
 
       {/* VIEW A: Public Gallery Piece View */}
-      {activePieceId ? (
+      {/* VIEW C: How It Works Page */}
+      {showHowItWorks && !activePieceId ? (
+        <HowItWorksPage
+          onGetStarted={() => {
+            setShowHowItWorks(false);
+            setCurrentStep(1);
+          }}
+          onBackToHome={() => setShowHowItWorks(false)}
+        />
+      ) : activePieceId ? (
         <GalleryPieceView
           uniqueId={activePieceId}
           initialMintRecord={latestMintRecord?.unique_id === activePieceId ? latestMintRecord : null}
